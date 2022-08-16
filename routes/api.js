@@ -41,6 +41,10 @@ router.get('/packages/update/:id', (req, res, next) => {
         r = trackers.ontrac(data.trackingNumber);
       } else if ( data.carrier === 'Amazon' ) {
         r = trackers.amazon(data.trackingNumber);
+      } else if ( data.carrier === 'Auspost' ) {
+        r = trackers.auspost(data.trackingNumber);
+      } else if { data.carrier === 'StarTrack' ) {
+        r = trackers.startrack(data.trackingNumber);
       } else {
         r = Promise.reject(`Did not know how to process carrier: ${data.carrier}`);
       }
