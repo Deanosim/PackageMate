@@ -110,12 +110,43 @@ amazonTracker = (trackingNumber) => {
     .catch(err => {return err})
 }
 
+const auspostTracker = (trackingNumber) => {
+  const url = `https://auspost.com.au/mypost/track/#/details/${trackingNumber}`;
+  // async function to scrape status from fedex website (since API is
+  // unreliable...)
+  return (async () => {
+    const browser = await playwright.chromium.launch({args: ['--no-sandbox', '--disable-setuid-sandbox']});
+    const page = await browser.newPage();
+    await page.goto(url);
+    const STATUS_SELECTOR = 'h3.status';
+    const DELIVERY_DATE_SELECTOR = 'p.delivery-date-main-date';
+    await page.waitForSelector(STATUS_SELECTOR);
+    let results = await page.$(STATUS_SELECTOR);
+    let text = await results.evaluate(element => element.innerText);
+    let res = text.split('\n')
+
+    // get expected delivery date
+    await page.waitForSelector(DELIVERY_DATE_SELECTOR)
+    results = await page.$(DELIVERY_DATE_SELECTOR);
+    text = await results.evaluate(element => element.innerText);
+    if (text) {
+      res.push(text);
+    }
+
+    console.log(`Auspost tracker res: ${res}`);
+    await browser.close();
+    return res;
+  })();
+  
+}
+
 trackers = {
   usps: uspsTracker,
   ups: upsTracker,
   fedex: fedExTracker,
   ontrac: onTracTracker,
-  amazon: amazonTracker
+  amazon: amazonTracker,
+  auspost: auspostTracker
 }
 
 module.exports = trackers;
