@@ -5,7 +5,7 @@ const Schema = mongoose.Schema;
 const PackageSchema = new Schema({
     carrier: {
         type: String,
-        enum: ['UPS', 'USPS', 'FedEx', 'Amazon', 'OnTrac'],
+        enum: ['UPS', 'USPS', 'FedEx', 'Amazon', 'OnTrac', 'AusPost', 'StarTrack'],
         required: [true, 'The carrier text field is required']
     },
     trackingNumber: {
